@@ -1,6 +1,6 @@
 ### About
 
-A pop-up extension for Chrome browser that shows summaries of transcripts for youtube videos powered by OpenAi API.
+A pop-up extension for Chrome browser that shows summaries of transcripts for youtube videos powered by [OpenAI API](https://beta.openai.com/examples/default-tldr-summary).
 
 ### Getting Started
 
