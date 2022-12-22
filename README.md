@@ -1,4 +1,4 @@
-### Getting Started
+### About
 
 A pop-up extension for Chrome browser that shows summaries of transcripts for youtube videos.
 
