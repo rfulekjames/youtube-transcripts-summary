@@ -3,7 +3,18 @@
 let pageUrl = "";
 let transcriptsData = null;
 
-window.onload = onWindowLoad;
+try {
+    window.onload = onWindowLoad;
+    chrome.tabs.onUpdated.addListener(async function
+        (tabId, changeInfo, tab) {
+        if (changeInfo.url) {
+            pageUrl = tab.url;
+            await refresh(tab);
+        }
+    });
+} catch(err) { 
+    showMessage(err.message); 
+}
 
 async function onWindowLoad() {
     setControlsEventListener(getNewSummaries);
@@ -17,14 +28,6 @@ async function getCurrentTab() {
     let [tab] = await chrome.tabs.query(queryOptions);
     return tab;
 }
-
-chrome.tabs.onUpdated.addListener(async function
-    (tabId, changeInfo, tab) {
-    if (changeInfo.url) {
-        pageUrl = tab.url;
-        await refresh(tab);
-    }
-});
 
 async function refresh(tab) {
     pageUrl = tab.url;
@@ -80,6 +83,6 @@ function updateSummaries() {
         apiCall: openaiSummary,
         extraction: openaiSummaryExtraction,
     },
-    messageDiv,
+        messageDiv,
     );
 }
