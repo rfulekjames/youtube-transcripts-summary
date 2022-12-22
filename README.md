@@ -9,8 +9,8 @@
 ### Features
 
 Besides choosing the transcript for generating summaries. There are two parameters affecting the produced outcome:
-- **[Summary length](https://beta.openai.com/docs/api-reference/completions/create#completions/create-max_tokens)**: The maximum number of tokens in the returned summary.
-- **[Temperature](https://beta.openai.com/docs/api-reference/completions/create#completions/create-temperature)**:  Higher values means the model will take more risks. 
+- **[Summary length](https://beta.openai.com/docs/api-reference/completions/create#completions/create-max_tokens)**: In the range between 20 and 300.  The maximum number of tokens in the returned summary.
+- **[Temperature](https://beta.openai.com/docs/api-reference/completions/create#completions/create-temperature)**:  In the range between 0 and 1. Higher values means the model will take more risks. 
 
 See [OpenAI API reference](https://beta.openai.com/examples/default-tldr-summary) of the endpoint powering the extension for a more detailed info.
 
