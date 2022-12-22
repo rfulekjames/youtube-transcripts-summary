@@ -1,6 +1,6 @@
 ### About
 
-A pop-up extension for Chrome browser that shows summaries of transcripts for youtube videos.
+A pop-up extension for Chrome browser that shows summaries of transcripts for youtube videos powered by OpenAi API.
 
 ### Getting Started
 
