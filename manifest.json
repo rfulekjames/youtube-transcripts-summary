@@ -3,7 +3,7 @@
   "version": "1.0",
   "manifest_version": 3,
   "description": "This extension shows youtube transcripts summaries as a pop-up.",
-  "action": {"default_popup": "transcriptextension.html"},
+  "action": {"default_popup": "transcriptextension.html",  "default_icon": "icon.png"},
   "permissions": ["tabs", "scripting",  "activeTab", "webNavigation"],
   "host_permissions": [ "<all_urls>" ]
 }

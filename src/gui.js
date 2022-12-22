@@ -29,9 +29,10 @@ function appendButton(apiInputs, index, parent) {
             setTimeout(() => {
                 if (!fetched) {
                     textDiv.style.visibility = "visible";
+                    textDiv.style.display = "block";
                     textDiv.innerText = "Getting the summary from the chosen transcript...";
                 }
-              }, 1000);
+              }, 300);
             const params = await apiInputs.texts[index];
             apiInputs.captions[index].summary = await params.superFunc({ ...apiInputs, text: params.text })
             enableControls();

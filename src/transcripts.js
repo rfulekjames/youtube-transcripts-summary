@@ -33,10 +33,10 @@ async function getTranscriptXml(url) {
 function getTranscriptSummaryFromXmlElement(transcriptsElement) {
     const textNodes = transcriptsElement.getElementsByTagName('text');
     const sequence = [...Array(textNodes.length).keys()];
-    const superFunc = async (summaryApiInput) => { 
-        const summaryJson =  await summaryApiInput.func(summaryApiInput);
+    const superFunc = async (apiInput) => { 
+        const summaryJson =  await apiInput.apiCall(apiInput);
         try {
-            return JSON.parse(summaryJson).choices[0].text;
+            return apiInput.extraction(summaryJson);
         }
         catch {
             return summaryJson;

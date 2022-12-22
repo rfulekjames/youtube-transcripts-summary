@@ -39,6 +39,7 @@ async function refreshPage() {
     }
     catch (err) {
         showMessage(`Cannot fetch the page source:\n${err.message}`);
+        refreshInProgress = false;
         return;
     }
 
@@ -73,5 +74,12 @@ function getNewSummaries() {
 }
 
 function updateSummaries() {
-    appendButtons({ ...transcriptsData, ...getSummaryApiParams(), func: openai_summary }, messageDiv);
+    appendButtons({
+        ...transcriptsData,
+        ...getSummaryApiParams(),
+        apiCall: openaiSummary,
+        extraction: openaiSummaryExtraction,
+    },
+    messageDiv,
+    );
 }
