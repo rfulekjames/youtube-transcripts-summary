@@ -43,6 +43,7 @@ function appendButton(apiInputs, index, parent) {
         } else {
             textDiv.style.visibility = "visible";
         }
+        textDiv.style.display = textDiv.style.visibility === "visible" ? "block" : "none";
         buttonTexts.map(it => it.style.fontWeight = it.id === buttonText.id && textDiv.style.visibility === "visible" ? "bold" : "normal");
         selectedButtonIndex = index;
     });
