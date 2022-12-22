@@ -2,7 +2,7 @@
 
 0. Download the content of this repository.
 
-1. Set a valid OpenAI API key [`OPEN_AI_API_KEY`]https://github.com/rfulekjames/youtube-transcripts-summary/blob/353f6c0cb0d417159f4e2d348343945f98f7a0df/src/openai.js#L5) as a variable in `src/openai.js` file.
+1. Set a valid OpenAI API key [`OPEN_AI_API_KEY`](https://github.com/rfulekjames/youtube-transcripts-summary/blob/353f6c0cb0d417159f4e2d348343945f98f7a0df/src/openai.js#L5) as a variable in `src/openai.js` file.
 
 2. Open `chrome://extensions`, turn the developer mode ON, and  `load unpacked` a folder containing the repository.
 
