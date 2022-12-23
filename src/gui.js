@@ -6,24 +6,24 @@ let selectedButtonIndex = -1;
 let buttonTexts = [];
 let buttons = [];
 
-function appendButtons(apiInputs, parent) {
+function appendButtons(params, parent) {
     buttonTexts = [];
     selectedButtonIndex = -1;
     parent.innerHTML = "";
-    apiInputs.captions = apiInputs.captions.map(caption => { caption.summary = null; return caption });
-    [...Array(apiInputs.texts.length).keys()].map((index) => appendButton(apiInputs, index, parent));
+    params.captions = params.captions.map(caption => { caption.summary = null; return caption });
+    [...Array(params.texts.length).keys()].map((index) => appendButton(params, index, parent));
 }
 
-function appendButton(apiInputs, index, parent) {
+function appendButton(params, index, parent) {
     const button = document.createElement("button");
     const buttonText = document.createElement("span");
-    buttonText.innerText = `${apiInputs.captions[index].languageCode}-${apiInputs.captions[index].kind}-transcript`;
+    buttonText.innerText = `${params.captions[index].languageCode}-${params.captions[index].kind}-transcript`;
     buttonText.id = `span_transcript_${index}`;
     button.id = `button_transcript_${index}`;
     button.appendChild(buttonText);
     parent.appendChild(button);
     button.addEventListener("click", async () => {
-        if (!apiInputs.captions[index].summary) {
+        if (!params.captions[index].summary) {
             disableControls();
             let fetched = false;
             setTimeout(() => {
@@ -33,12 +33,12 @@ function appendButton(apiInputs, index, parent) {
                     textDiv.innerText = "Getting the summary from the chosen transcript...";
                 }
               }, 300);
-            const params = await apiInputs.texts[index];
-            apiInputs.captions[index].summary = await params.superFunc({ ...apiInputs, text: params.text })
+            const inputText = await params.texts[index];
+            params.captions[index].summary = await params.getText({ ...params, inputText })
             enableControls();
             fetched = true;
         }
-        textDiv.innerText = apiInputs.captions[index].summary;
+        textDiv.innerText = params.captions[index].summary;
         if (selectedButtonIndex === index) {
             textDiv.style.visibility = textDiv.style.visibility === "visible" ? "hidden" : "visible";
         } else {
@@ -59,13 +59,13 @@ function showMessage(message) {
 function enableControls() {
     summarySize.disabled = false;
     temperature.disabled = false;
+    slidingDiv.style.display = "block";
     buttons.map( button => button.disabled = false);
 }
 
 function disableControls() {
     summarySize.disabled = true;
     temperature.disabled = true;
-    buttons.map( button => button.disabled = true);
 }
 
 function initGUI(pendingMessage, isInProgress, timeout) {

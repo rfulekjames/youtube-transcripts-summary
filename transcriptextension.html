@@ -8,34 +8,42 @@
     <script src='src/transcriptextension.js'></script>
     <style>
         button {
-            border: 20px solid block;
-            padding: 10pm 10px;
-            display: inline-block;
             text-align: center;
+            margin: 5px 5px;
         }
 
         div.summary {
             font-size: large;
-            outline: 3px solid black;
-            border: 3px solid white;
+            outline: 1px solid black;
+            border: 5px solid white;
+        }
+
+        div.sliding {
+            display: none;
+        }
+
+        .wrapper {
+            display: grid;
+            grid-template-columns: 200px 200px;
         }
 
         input {
             width: 100%;
+            accent-color: red;
         }
     </style>
 </head>
 
 <body style="width:400px;">
     <h3>Youtube Transcripts Summary</h3>
-    <div class="slidecontainer" id="slideDiv">
+    <div id="slidingDiv" class="sliding">
         Summary length:<br />
         <input type="range" min="20" max="300" value="200" id="summarySize" />
         Temperature:<br/>
         <input type="range" min="1" max="99" value="70" id="temperature" />
     </div>
     <br/>
-    <div id="messageDiv"></div>
+    <div id="messageDiv" class="wrapper"></div>
     <br/>
     <div id="textDiv" class="summary"></div>
 </body>

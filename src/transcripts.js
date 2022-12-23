@@ -9,10 +9,10 @@ function extractVideoId(url) {
 
 async function getTranscriptsData(pageSource) {
     const captions = getCaptionsInfoFromPageSource(pageSource);
-    const transcriptsPromises = captions.map(caption => getTranscriptSummaryFromUrl(caption.url));
+    const transcripts = captions.map(caption => getTranscriptSummaryFromUrl(caption.url));
     return {
         captions,
-        texts: transcriptsPromises,
+        texts: transcripts,
     };
 }
 
@@ -33,19 +33,7 @@ async function getTranscriptXml(url) {
 function getTranscriptSummaryFromXmlElement(transcriptsElement) {
     const textNodes = transcriptsElement.getElementsByTagName('text');
     const sequence = [...Array(textNodes.length).keys()];
-    const superFunc = async (apiInput) => { 
-        const summaryJson =  await apiInput.apiCall(apiInput);
-        try {
-            return apiInput.extraction(summaryJson);
-        }
-        catch {
-            return summaryJson;
-        }
-    }
-    return {
-        text: sequence.map(i => textNodes[i].childNodes[0].nodeValue).join('\n'),
-        superFunc,
-    };
+    return sequence.map(i => textNodes[i].childNodes[0].nodeValue).join('\n');
 }
 
 // Getting captions

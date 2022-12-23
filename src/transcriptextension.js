@@ -12,8 +12,8 @@ try {
             await refresh(tab);
         }
     });
-} catch(err) { 
-    showMessage(err.message); 
+} catch (err) {
+    showMessage(err.message);
 }
 
 async function onWindowLoad() {
@@ -50,6 +50,8 @@ async function refreshPage() {
 
     if (await changeExtractedCaptions(html)) {
         enableControls();
+    } else {
+        disableControls();
     }
     refreshInProgress = false;
 }
@@ -80,8 +82,7 @@ function updateSummaries() {
     appendButtons({
         ...transcriptsData,
         ...getSummaryApiParams(),
-        apiCall: openaiSummary,
-        extraction: openaiSummaryExtraction,
+        getText: openaiGetSummary,
     },
         messageDiv,
     );

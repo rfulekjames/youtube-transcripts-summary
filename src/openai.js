@@ -7,8 +7,18 @@ const OPEN_AI_API_URL = "https://api.openai.com/v1/completions";
 const OPEN_AI_API_MAX_NUMBER_OF_INPUT_TOKENS = 2500;
 const OPEN_AI_API_MODEL = "text-davinci-003";
 
-async function openaiSummary(params) {
-    const tokens = params.text.split(/[-\=\_\;\:\,\.\s]+/).slice(0, OPEN_AI_API_MAX_NUMBER_OF_INPUT_TOKENS);
+async function openaiGetSummary(params) {
+    const summaryJson = await openaiGetResponse(params);
+    try {
+        return openaiSummaryExtraction(summaryJson);
+    }
+    catch(err) {
+        return err.message;
+    }
+}
+
+async function openaiGetResponse(params) {
+    const tokens = params.inputText.split(/[-\=\_\;\:\,\.\s]+/).slice(0, OPEN_AI_API_MAX_NUMBER_OF_INPUT_TOKENS);
     const text_shortened = tokens.join(' ').toLowerCase();
 
     let data = {
@@ -44,5 +54,10 @@ async function openaiSummary(params) {
 }
 
 function openaiSummaryExtraction(summaryJson) {
-    return JSON.parse(summaryJson).choices[0].text;
+    try {
+        return JSON.parse(summaryJson).choices[0].text;
+    }
+    catch {
+        return JSON.parse(summaryJson).error.message;
+    }
 }
