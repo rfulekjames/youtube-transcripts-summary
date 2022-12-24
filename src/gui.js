@@ -34,8 +34,8 @@ function appendButton(params, index, parent) {
                     textDiv.innerText = "Getting the summary from the chosen transcript...";
                 }
             }, 300);
-            const inputText = await params.texts[index];
-            params.summaries[index] = await params.getText({ ...params, inputText })
+            const inputTextOrError = await params.texts[index];
+            params.summaries[index] = typeof inputTextOrError !== "string" ? inputTextOrError.message : await params.getText({ ...params, inputText: inputTextOrError });
             enableControls();
             fetched = true;
         }
@@ -71,11 +71,7 @@ function disableControls() {
 }
 
 function initGUI(pendingMessage, isInProgress, timeout) {
-    setTimeout(() => {
-        if (isInProgress()) {
-            disableControls();
-        }
-    }, timeout / 10);
+    disableControls();
     setTimeout(() => {
         if (isInProgress()) {
             messageDiv.innerHTML = pendingMessage;

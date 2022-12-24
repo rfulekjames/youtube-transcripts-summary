@@ -2,10 +2,11 @@
 
 // OpenAI API Integration
 
-const OPEN_AI_API_KEY = "API KEY HERE";
+const OPEN_AI_API_KEY = "API KEY HERE"; 
 const OPEN_AI_API_URL = "https://api.openai.com/v1/completions";
 const OPEN_AI_API_MAX_NUMBER_OF_INPUT_TOKENS = 2500;
 const OPEN_AI_API_MODEL = "text-davinci-003";
+const OPEN_AI_FETCH_REQUEST_TIMEOUT = 10000;
 
 async function openaiGetSummary(params) {
     const summaryJson = await openaiGetResponse(params);
@@ -42,16 +43,14 @@ async function openaiGetResponse(params) {
     };
 
     try {
-        const res = await fetch(OPEN_AI_API_URL, {
+        return await params.fetch(OPEN_AI_API_URL, {
             ...requestParams,
-            signal: AbortSignal.timeout(10000),
-        });
-        const json = await res.text();
-        return json;
+        }, OPEN_AI_FETCH_REQUEST_TIMEOUT);
     } catch (err) {
         return JSON.stringify({
-            "error": "The transcript summary OpenAI API call was not successful.",
-            "message": err.message,
+            "error": {
+                "message": `The transcript summary OpenAI API call was not successful: \n${err.message}`,
+            }
         });
     }
 }

@@ -1,5 +1,7 @@
 "use strict";
 
+const TRANSCRIPT_FETCH_REQUEST_TIMEOUT = 10000;
+
 function extractVideoId(url) {
     const search = /^https:\/\/www\.youtube\.com\/watch\?v=([^&]+)/;
     return url.match(search);
@@ -7,30 +9,33 @@ function extractVideoId(url) {
 
 // Transcript Fetching
 
-async function getTranscriptsData(pageSource) {
+async function getTranscriptsData(pageSource, fetchFunc) {
     const metadata = getMetaDataFromPagaSource(pageSource);
-    const transcripts = metadata.map(metadataItem => getTranscriptSummaryFromUrl(metadataItem.url));
+    const transcripts = metadata.map(metadataItem => getTranscriptFromUrl(metadataItem.url, fetchFunc));
     return {
         metadata,
         texts: transcripts,
     };
 }
 
-async function getTranscriptSummaryFromUrl(url) {
-    const xmlTranscriptsDoc = await getTranscriptXml(url)
-    const transcriptsElement = xmlTranscriptsDoc.getElementsByTagName('transcript')[0];
-    return getTranscriptSummaryFromXmlElement(transcriptsElement);
+async function getTranscriptFromUrl(url, fetchFunc) {
+    try {
+        const xmlTranscriptsDoc = await getTranscriptXml(url, fetchFunc)
+        const transcriptsElement = xmlTranscriptsDoc.getElementsByTagName('transcript')[0];
+        return getTranscriptFromXmlElement(transcriptsElement);
+    } catch(err) {
+        return new Error(`Error fetching transcripts from ${url}:\n${err.message}`);
+    }
 }
 
-async function getTranscriptXml(url) {
-    const res = await fetch(url);
-    const transcriptXml = await res.text();
+async function getTranscriptXml(url, fetchFunc) {
+    const transcriptXml = await fetchFunc(url, {}, TRANSCRIPT_FETCH_REQUEST_TIMEOUT);
     const xmlParser = new DOMParser();
     const xmlTranscriptsDoc = xmlParser.parseFromString(transcriptXml, "text/xml");
     return xmlTranscriptsDoc;
 }
 
-function getTranscriptSummaryFromXmlElement(transcriptsElement) {
+function getTranscriptFromXmlElement(transcriptsElement) {
     const textNodes = transcriptsElement.getElementsByTagName('text');
     const sequence = [...Array(textNodes.length).keys()];
     return sequence.map(i => textNodes[i].childNodes[0].nodeValue).join('\n');

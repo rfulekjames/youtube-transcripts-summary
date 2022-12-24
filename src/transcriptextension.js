@@ -3,6 +3,9 @@
 let pageUrl = "";
 let transcriptsData = null;
 
+const FETCH_REQUEST_TIMEOUT = 10000;
+const BEFORE_PENDING_MESSAGE_TIMEOUT = 1000;
+
 try {
     window.onload = onWindowLoad;
     chrome.tabs.onUpdated.addListener(async function
@@ -36,9 +39,9 @@ async function refresh(tab) {
 
 async function refreshPage() {
     let refreshInProgress = true;
-    initGUI("Searching for available transcripts...", () => refreshInProgress, 1000);
-    try {
-        var res = await fetch(pageUrl);
+    initGUI("Searching for available transcripts...", () => refreshInProgress, BEFORE_PENDING_MESSAGE_TIMEOUT);
+    try {    
+        var pageSource = await fetchWithTimeout(pageUrl, {}, FETCH_REQUEST_TIMEOUT);
     }
     catch (err) {
         showMessage(`Cannot fetch the page source:\n${err.message}`);
@@ -46,9 +49,7 @@ async function refreshPage() {
         return;
     }
 
-    const html = await res.text();
-
-    if (await changeExtractedCaptions(html)) {
+    if (await changeExtractedTranscripts(pageSource)) {
         enableControls();
     } else {
         disableControls();
@@ -56,16 +57,24 @@ async function refreshPage() {
     refreshInProgress = false;
 }
 
-async function changeExtractedCaptions(pageSource) {
+async function fetchWithTimeout(url, requestParams, timeout) {
+    const abortSignal = AbortSignal.timeout(timeout);
+    abortSignal.throwIfAborted();
+    var res = await fetch(url, { ...requestParams, signal: abortSignal });
+    if (res.status >= 500) throw new Error(`Server error for request ${url}.`);
+    return await res.text();
+}
+
+async function changeExtractedTranscripts(pageSource) {
     const videoId = extractVideoId(pageUrl);
     if (videoId) {
         try {
-            transcriptsData = await getTranscriptsData(pageSource);
-            updateSummaries();
-            return true;
+            transcriptsData = await getTranscriptsData(pageSource, fetchWithTimeout);
         } catch {
             showMessage("No transcripts found.");
         }
+        updateSummaries();
+        return true;
     } else {
         showMessage("Nothing to see here.");
     }
@@ -84,6 +93,7 @@ function updateSummaries() {
         summaries: Array(transcriptsData.metadata.length).fill(null),
         ...getSummaryApiParams(),
         getText: openaiGetSummary,
+        fetch: fetchWithTimeout,
     },
         messageDiv,
     );
