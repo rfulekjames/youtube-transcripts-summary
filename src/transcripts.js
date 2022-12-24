@@ -8,10 +8,10 @@ function extractVideoId(url) {
 // Transcript Fetching
 
 async function getTranscriptsData(pageSource) {
-    const captions = getCaptionsInfoFromPageSource(pageSource);
-    const transcripts = captions.map(caption => getTranscriptSummaryFromUrl(caption.url));
+    const metadata = getMetaDataFromPagaSource(pageSource);
+    const transcripts = metadata.map(metadataItem => getTranscriptSummaryFromUrl(metadataItem.url));
     return {
-        captions,
+        metadata,
         texts: transcripts,
     };
 }
@@ -38,25 +38,25 @@ function getTranscriptSummaryFromXmlElement(transcriptsElement) {
 
 // Getting captions
 
-function getCaptionsInfoFromPageSource(pageSource) {
-    const captionsJsonString = extractCaptionsJsonString(pageSource);
-    const captionsJson = JSON.parse(captionsJsonString);
-    return getCaptionsFromCaptionsJson(captionsJson);
+function getMetaDataFromPagaSource(pageSource) {
+    const metadataJsonString = extractCaptionsJsonString(pageSource);
+    const rawMetadata = JSON.parse(metadataJsonString);
+    return getMetadata(rawMetadata);
 }
 
 function extractCaptionsJsonString(sourceHtml) {
     return sourceHtml.split('"captions":')[1].split(',"videoDetails')[0].replace('\n', '');
 }
 
-function getCaptionsFromCaptionsJson(captionsJson) {
-    const captionTracks = captionsJson.playerCaptionsTracklistRenderer.captionTracks;
-    const captions = [];
+function getMetadata(rawMetadata) {
+    const captionTracks = rawMetadata.playerCaptionsTracklistRenderer.captionTracks;
+    const metadata = [];
     for (const captionTrack of captionTracks) {
-        captions.push({
+        metadata.push({
             url: captionTrack.baseUrl,
             languageCode: captionTrack.languageCode,
             kind: captionTrack.kind === 'asr' ? 'generated' : 'manual',
         });
     }
-    return captions;
+    return metadata;
 }

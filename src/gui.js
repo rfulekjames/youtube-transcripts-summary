@@ -10,20 +10,21 @@ function appendButtons(params, parent) {
     buttonTexts = [];
     selectedButtonIndex = -1;
     parent.innerHTML = "";
-    params.captions = params.captions.map(caption => { caption.summary = null; return caption });
+    console.log(params.summaries[0]);
     [...Array(params.texts.length).keys()].map((index) => appendButton(params, index, parent));
 }
 
 function appendButton(params, index, parent) {
     const button = document.createElement("button");
     const buttonText = document.createElement("span");
-    buttonText.innerText = `${params.captions[index].languageCode}-${params.captions[index].kind}-transcript`;
+    buttonText.innerText = `${params.metadata[index].languageCode}-${params.metadata[index].kind}-transcript`;
     buttonText.id = `span_transcript_${index}`;
     button.id = `button_transcript_${index}`;
+    button.title = `View summary from ${buttonText.innerText}`;
     button.appendChild(buttonText);
     parent.appendChild(button);
     button.addEventListener("click", async () => {
-        if (!params.captions[index].summary) {
+        if (!params.summaries[index]) {
             disableControls();
             let fetched = false;
             setTimeout(() => {
@@ -32,13 +33,13 @@ function appendButton(params, index, parent) {
                     textDiv.style.display = "block";
                     textDiv.innerText = "Getting the summary from the chosen transcript...";
                 }
-              }, 300);
+            }, 300);
             const inputText = await params.texts[index];
-            params.captions[index].summary = await params.getText({ ...params, inputText })
+            params.summaries[index] = await params.getText({ ...params, inputText })
             enableControls();
             fetched = true;
         }
-        textDiv.innerText = params.captions[index].summary;
+        textDiv.innerText = params.summaries[index];
         if (selectedButtonIndex === index) {
             textDiv.style.visibility = textDiv.style.visibility === "visible" ? "hidden" : "visible";
         } else {
@@ -60,12 +61,13 @@ function enableControls() {
     summarySize.disabled = false;
     temperature.disabled = false;
     slidingDiv.style.display = "block";
-    buttons.map( button => button.disabled = false);
+    buttons.map(button => button.disabled = false);
 }
 
 function disableControls() {
     summarySize.disabled = true;
     temperature.disabled = true;
+    buttons.map(button => button.disabled = true);
 }
 
 function initGUI(pendingMessage, isInProgress, timeout) {
@@ -73,12 +75,12 @@ function initGUI(pendingMessage, isInProgress, timeout) {
         if (isInProgress()) {
             disableControls();
         }
-      }, timeout / 10);
+    }, timeout / 10);
     setTimeout(() => {
         if (isInProgress()) {
             messageDiv.innerHTML = pendingMessage;
         }
-      }, timeout);
+    }, timeout);
     textDiv.innerHTML = "";
     textDiv.style.visibility = "hidden";
 }

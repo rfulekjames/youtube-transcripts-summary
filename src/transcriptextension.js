@@ -81,6 +81,7 @@ function getNewSummaries() {
 function updateSummaries() {
     appendButtons({
         ...transcriptsData,
+        summaries: Array(transcriptsData.metadata.length).fill(null),
         ...getSummaryApiParams(),
         getText: openaiGetSummary,
     },

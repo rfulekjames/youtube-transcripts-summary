@@ -12,7 +12,7 @@ async function openaiGetSummary(params) {
     try {
         return openaiSummaryExtraction(summaryJson);
     }
-    catch(err) {
+    catch (err) {
         return err.message;
     }
 }
@@ -42,7 +42,10 @@ async function openaiGetResponse(params) {
     };
 
     try {
-        const res = await fetch(OPEN_AI_API_URL, requestParams);
+        const res = await fetch(OPEN_AI_API_URL, {
+            ...requestParams,
+            signal: AbortSignal.timeout(10000),
+        });
         const json = await res.text();
         return json;
     } catch (err) {
