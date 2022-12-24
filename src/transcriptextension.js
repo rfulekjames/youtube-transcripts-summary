@@ -9,7 +9,7 @@ const BEFORE_PENDING_MESSAGE_TIMEOUT = 1000;
 try {
     window.onload = onWindowLoad;
     chrome.tabs.onUpdated.addListener(async function
-        (tabId, changeInfo, tab) {
+        (_, changeInfo, tab) {
         if (changeInfo.url) {
             pageUrl = tab.url;
             await refresh(tab);
@@ -60,7 +60,7 @@ async function refreshPage() {
 async function fetchWithTimeout(url, requestParams, timeout) {
     const abortSignal = AbortSignal.timeout(timeout);
     abortSignal.throwIfAborted();
-    var res = await fetch(url, { ...requestParams, signal: abortSignal });
+    const res = await fetch(url, { ...requestParams, signal: abortSignal });
     if (res.status >= 500) throw new Error(`Server error for request ${url}.`);
     return await res.text();
 }
@@ -77,8 +77,8 @@ async function changeExtractedTranscripts(pageSource) {
         return true;
     } else {
         showMessage("Nothing to see here.");
+        return false;
     }
-    return false;
 }
 
 function getNewSummaries() {
@@ -90,7 +90,6 @@ function getNewSummaries() {
 function updateSummaries() {
     appendButtons({
         ...transcriptsData,
-        summaries: Array(transcriptsData.metadata.length).fill(null),
         ...getSummaryApiParams(),
         getText: openaiGetSummary,
         fetch: fetchWithTimeout,

@@ -10,7 +10,8 @@ function appendButtons(params, parent) {
     buttonTexts = [];
     selectedButtonIndex = -1;
     parent.innerHTML = "";
-    console.log(params.summaries[0]);
+
+    params = { ...params, summaries: Array(params.metadata.length).fill(null) };
     [...Array(params.texts.length).keys()].map((index) => appendButton(params, index, parent));
 }
 
@@ -35,7 +36,8 @@ function appendButton(params, index, parent) {
                 }
             }, 300);
             const inputTextOrError = await params.texts[index];
-            params.summaries[index] = typeof inputTextOrError !== "string" ? inputTextOrError.message : await params.getText({ ...params, inputText: inputTextOrError });
+            params.summaries[index] = typeof inputTextOrError !== "string" ?
+                inputTextOrError.message : await params.getText({ ...params, inputText: inputTextOrError });
             enableControls();
             fetched = true;
         }
@@ -46,7 +48,8 @@ function appendButton(params, index, parent) {
             textDiv.style.visibility = "visible";
         }
         textDiv.style.display = textDiv.style.visibility === "visible" ? "block" : "none";
-        buttonTexts.map(it => it.style.fontWeight = it.id === buttonText.id && textDiv.style.visibility === "visible" ? "bold" : "normal");
+        buttonTexts.map(it => it.style.fontWeight = it.id === buttonText.id && textDiv.style.visibility === "visible" ?
+            "bold" : "normal");
         selectedButtonIndex = index;
     });
     buttonTexts.push(buttonText);
