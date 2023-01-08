@@ -2,18 +2,11 @@
 
 // OpenAI API Integration
 
-const OPEN_AI_API_KEY = "API KEY HERE";
+const OPEN_AI_API_KEY = "YOUR_OPENAI_API_KEY";
 const OPEN_AI_API_URL = "https://api.openai.com/v1/completions";
 const OPEN_AI_API_MAX_NUMBER_OF_INPUT_TOKENS = 2500;
 const OPEN_AI_API_MODEL = "text-davinci-003";
 const OPEN_AI_FETCH_REQUEST_TIMEOUT = 10000;
-
-const trojoFriendlyMessages = [
-    "\u0054r\u006F\x6A\x6F, m\u0061\u0301s\u030C zly\u0301 ten ko\u0301d! Spama\u0308taj sa.",
-    "\u0054r\u006F\x6A\x6F, bez ko\u0301du sa nep\x6Fhnes\u030C!",
-    "O c\u030Co ti ide?",
-    "\u0054r\u006F\x6A\x6F, ma\u0301s\u030C p\x6Fsr\x61ty\u0301 ten ko\u0301d! Spama\u0308taj s\x61 uz\u030C."
-]
 
 Array.prototype.random = function () {
     return this[Math.floor((Math.random() * this.length))];
@@ -68,12 +61,5 @@ async function openaiGetResponse(params) {
 
 function openaiSummaryExtraction(summaryString) {
     const summary = JSON.parse(summaryString);
-    return summary.choices ? summary.choices[0].text : getTrojoFriendlyMessage(summary.error.message);
-}
-
-function getTrojoFriendlyMessage(message) {
-    if (message.startsWith("Incorrect API key provided")) {
-        message = trojoFriendlyMessages.random();
-    }
-    return message;
+    return summary.choices ? summary.choices[0].text : summary.error.message;
 }
