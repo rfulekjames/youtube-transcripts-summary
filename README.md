@@ -21,6 +21,6 @@ See [OpenAI API reference](https://beta.openai.com/examples/default-tldr-summary
 ### Limitations
 
 The summary is computed based only on the first roughly  [2500](https://github.com/rfulekjames/youtube-transcripts-summary/blob/353f6c0cb0d417159f4e2d348343945f98f7a0df/src/openai.js#L7) words in transcript which is close to a  
-limit of the OpenAI API endpoint used (as of Jan 2023).
+limit of the OpenAI API endpoint used (as of Jan. 2023).
 
 The extension might stop working if the placement of the url links to the transcripts in the source page changes which can happen over time.
